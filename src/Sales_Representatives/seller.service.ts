@@ -150,10 +150,15 @@ export class SellerService {
         }
     }
 
-    async showCartProduct():Promise<CartEntity[]>
+    async showCartProduct():Promise<{ total_price: number, cart_data: CartEntity[] }>
     {
-        //const seller= await this.sellerRepo.findOneBy({username:username})
-        return await this.cartRepo.find();
+        let total_price = 0;
+        const cart_data = await this.cartRepo.find();
+            for(let i = 0; i<cart_data.length; i++){
+
+                total_price += cart_data[i].productPrice;
+            }
+        return {total_price, cart_data};
     }
 
     /*async showAllOrder(username:string):Promise<CartEntity[]>{
@@ -162,29 +167,38 @@ export class SellerService {
         return await this.cartRepo.find({where: {seller,},});
     }*/
 
-    async order(msg: string, username:string): Promise<OrderEntity> {
-        let total_price = 0;
+    async order(msg: string, username:string, productId:number): Promise<OrderEntity> {
+        //let total_price = 0;
         let order;
         const data = await this.cartRepo.find();
         const seller= await this.sellerRepo.findOneBy({username:username})
         if(msg == "yes"){
-            for(let i = 0; i<data.length; i++){
+             for(let i = 0; i<data.length; i++){
 
                 data[i].seller = seller
                 order = this.orderRepo.save(data[i]);
-                total_price += data[i].productPrice;  
+                //total_price += data[i].productPrice;  
                 this.cartRepo.delete({productId:data[i].productId});
             }
             return order;
         }
         else{
+            // let product;
+            // for(let i = 0; i<data.length; i++){
+            //     const find_product = await this.productRepo.findOneBy({productId: data[i].productId});
+            //     find_product.productQuantity = find_product.productQuantity + data[i].productQuantity;
+            //     this.productRepo.update(data[i].productId,find_product);
+            //     this.cartRepo.delete({productId:data[i].productId});
+            // }
+            // return product;
+
             let product;
-            for(let i = 0; i<data.length; i++){
-                const find_product = await this.productRepo.findOneBy({productId: data[i].productId});
-                find_product.productQuantity = find_product.productQuantity + data[i].productQuantity;
-                this.productRepo.update(data[i].productId,find_product);
-                this.cartRepo.delete({productId:data[i].productId});
-            }
+                const remove_data = await this.cartRepo.findOneBy({productId: productId});
+                const find_product = await this.productRepo.findOneBy({productId: remove_data.productId});
+                find_product.productQuantity = find_product.productQuantity + remove_data.productQuantity;
+                this.productRepo.update(remove_data.productId,find_product);
+                this.cartRepo.delete({productId:remove_data.productId});
+
             return product;
         }
     }

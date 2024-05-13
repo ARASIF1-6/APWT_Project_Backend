@@ -363,9 +363,9 @@ export class SellerController {
     }*/
 
     @Post('/confirm_order')
-    order(@Query('msg') msg:string, @Query('username') username:string): object {
+    order(@Query('msg') msg:string, @Query('username') username:string, @Query('productId') productId:number): object {
         try{
-          return this.sellerService.order(msg, username);
+          return this.sellerService.order(msg, username, productId);
         }
         catch{
             return {error: 'invalid'};
