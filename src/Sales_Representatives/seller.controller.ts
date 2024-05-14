@@ -338,6 +338,17 @@ export class SellerController {
         }
     }
 
+    // @Put('/update_order')
+    // @UsePipes(new ValidationPipe)
+    // UpdateCart(@Body() myobj: CartDTO): object {
+    //     try{
+    //       return this.sellerService.UpdateCart(myobj);
+    //     }
+    //     catch{
+    //         throw new InternalServerErrorException("Failed to order");
+    //     }
+    // }
+
     @UseGuards(SessionGuard)
     @Get('/view_cart')
     showCartProduct(): object
@@ -350,17 +361,17 @@ export class SellerController {
         }
     }
 
-    /*@UseGuards(SessionGuard)
+    //@UseGuards(SessionGuard)
     @Get('/show_all_order')
-    showAllOrder(@Session() session): object
+    showAllOrder(): object
     {
         try{
-           return this.sellerService.showAllOrder(session.username);
+           return this.sellerService.showAllOrder();
         }
         catch{
             throw new InternalServerErrorException("Failed to show all customer");
         }
-    }*/
+    }
 
     @Post('/confirm_order')
     order(@Query('msg') msg:string, @Query('username') username:string, @Query('productId') productId:number): object {

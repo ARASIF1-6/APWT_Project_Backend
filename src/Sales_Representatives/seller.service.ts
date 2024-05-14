@@ -150,6 +150,19 @@ export class SellerService {
         }
     }
 
+    // async UpdateCart(myobj: CartEntity): Promise<CartEntity> {
+    //     const data = await this.productRepo.findOneBy({productId:myobj.productId});
+    //     if(data){
+    //         data.productQuantity = data.productQuantity - myobj.productQuantity;
+    //         this.productRepo.update(myobj.productId,data);
+    //         const cart_data = await this.cartRepo.findOneBy({productId:myobj.productId});
+    //         cart_data.productQuantity = cart_data.productQuantity + myobj.productQuantity;
+    //         cart_data.productPrice = cart_data.productPrice * cart_data.productQuantity;
+    //         await this.cartRepo.update(myobj.productId,cart_data);
+    //         return cart_data;
+    //     }
+    // }
+
     async showCartProduct():Promise<{ total_price: number, cart_data: CartEntity[] }>
     {
         let total_price = 0;
@@ -161,11 +174,11 @@ export class SellerService {
         return {total_price, cart_data};
     }
 
-    /*async showAllOrder(username:string):Promise<CartEntity[]>{
-        const seller= await this.sellerRepo.findOneBy({username:username})
+    async showAllOrder():Promise<OrderEntity[]>{
+        //const seller= await this.sellerRepo.findOneBy({username:username})
         //const data = seller.sellerId;
-        return await this.cartRepo.find({where: {seller,},});
-    }*/
+        return await this.orderRepo.find();
+    }
 
     async order(msg: string, username:string, productId:number): Promise<OrderEntity> {
         //let total_price = 0;
