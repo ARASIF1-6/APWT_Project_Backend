@@ -23,11 +23,11 @@ export class SellerController {
     constructor(private readonly sellerService: SellerService) { }
 
     @UseGuards(AuthGuard)
-    @Post('address')
+    @Post('address/:username')
     @UsePipes(new ValidationPipe())
-    async createAddress(@Body() addressDto: addressDto, @Session() session): Promise<AddressEntity> {
+    async createAddress(@Body() addressDto: addressDto, @Param('username') username:string): Promise<AddressEntity> {
         try{
-            return await this.sellerService.createAddress(addressDto, session.username);
+            return await this.sellerService.createAddress(addressDto, username);
         } 
         catch{
             throw new InternalServerErrorException('Failed to create address');
@@ -46,8 +46,8 @@ export class SellerController {
 
     }
 
-    @UseGuards(AuthGuard)
-    @Put('/update_profilePic')
+    //@UseGuards(AuthGuard)
+    @Put('/update_profilePic/:username')
     @UseInterceptors(FileInterceptor('profilePic',
         {
             fileFilter: (req, file, cb) => {
@@ -67,11 +67,11 @@ export class SellerController {
         }
     ))
     @UsePipes(new ValidationPipe)
-    updatePic(@Session() session, @Body() UpdatePic:UpdateProfilePicDto, @UploadedFile() myfile: Express.Multer.File): object
+    updatePic(@Param('username') username:string, @Body() UpdatePic:UpdateProfilePicDto, @UploadedFile() myfile: Express.Multer.File): object
     {
         UpdatePic.filename = myfile.filename;
         try{
-           return this.sellerService.updatePic(session.username, UpdatePic);
+           return this.sellerService.updatePic(username, UpdatePic);
         }
         catch{
             throw new InternalServerErrorException("Failed to update profile pic");
@@ -79,13 +79,13 @@ export class SellerController {
     }
 
     @UseGuards(AuthGuard)
-    @Put('/update_password')
-    async updatePassword(@Session() session, @Body() UpdatePassword:UpdatePasswordDTO): Promise<object>{
+    @Put('/update_password/:username')
+    async updatePassword(@Param('username') username:string, @Body() UpdatePassword:UpdatePasswordDTO): Promise<object>{
         try{
             const salt = await bcrypt.genSalt();
             const hashedpassword = await bcrypt.hash(UpdatePassword.password, salt); 
             UpdatePassword.password= hashedpassword;
-            return this.sellerService.updatePassword(session.username, UpdatePassword);
+            return this.sellerService.updatePassword(username, UpdatePassword);
          }
          catch{
             throw new InternalServerErrorException("Failed to update password");

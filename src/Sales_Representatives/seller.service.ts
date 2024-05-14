@@ -196,15 +196,6 @@ export class SellerService {
             return order;
         }
         else{
-            // let product;
-            // for(let i = 0; i<data.length; i++){
-            //     const find_product = await this.productRepo.findOneBy({productId: data[i].productId});
-            //     find_product.productQuantity = find_product.productQuantity + data[i].productQuantity;
-            //     this.productRepo.update(data[i].productId,find_product);
-            //     this.cartRepo.delete({productId:data[i].productId});
-            // }
-            // return product;
-
             let product;
                 const remove_data = await this.cartRepo.findOneBy({productId: productId});
                 const find_product = await this.productRepo.findOneBy({productId: remove_data.productId});
